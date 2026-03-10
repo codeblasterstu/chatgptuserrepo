@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit User | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-layout">
+      <div class="brand-row">
+        <strong>User Admin Portal</strong>
+        <button class="btn btn-nav-toggle" type="button" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+      <nav class="nav-links" id="mainNav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="create-user.html">Create</a>
+        <a href="list-users.html">List</a>
+        <a href="edit-user.html">Edit</a>
+        <a href="update-user.html">Update</a>
+      </nav>
+      <button class="btn btn-muted nav-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h1>Edit User</h1>
+      <div class="grid-2">
+        <label>Select User
+          <select id="userPicker"></select>
+        </label>
+      </div>
+      <div id="notice"></div>
+      <form id="editForm">
+        <div class="grid-3">
+          <label>First Name<input name="first_name" required /></label>
+          <label>Last Name<input name="last_name" required /></label>
+          <label>Email<input name="email" type="email" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Phone<input name="phone" required /></label>
+          <label>DOB<input name="dob" type="date" required /></label>
+          <label>Gender<select name="gender" required><option>Male</option><option>Female</option><option>Other</option></select></label>
+        </div>
+        <label>Notes<textarea name="notes"></textarea></label>
+        <button class="btn-primary" type="submit">Save Changes</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    requireLogin();
+    setNavActive();
+
+    const picker = document.getElementById('userPicker');
+    const form = document.getElementById('editForm');
+    const notice = document.getElementById('notice');
+
+    function loadPicker() {
+      const users = getUsers();
+      picker.innerHTML = users.map(u => `<option value="${u.id}">${u.id} - ${u.first_name} ${u.last_name}</option>`).join('');
+      fillForm();
+    }
+
+    function fillForm() {
+      const users = getUsers();
+      const user = users.find(u => String(u.id) === picker.value);
+      if (!user) return;
+      form.first_name.value = user.first_name;
+      form.last_name.value = user.last_name;
+      form.email.value = user.email;
+      form.phone.value = user.phone;
+      form.dob.value = user.dob;
+      form.gender.value = user.gender;
+      form.notes.value = user.notes || '';
+    }
+
+    picker.addEventListener('change', fillForm);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const users = getUsers();
+      const i = users.findIndex(u => String(u.id) === picker.value);
+      if (i < 0) return;
+      Object.assign(users[i], {
+        first_name: form.first_name.value,
+        last_name: form.last_name.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        dob: form.dob.value,
+        gender: form.gender.value,
+        notes: form.notes.value,
+        updated_by: sessionStorage.getItem('loggedInUser') || 'admin',
+        updated_at: new Date().toISOString()
+      });
+      saveUsers(users);
+      showNotice(notice, 'User record edited successfully.');
+      loadPicker();
+    });
+
+    loadPicker();
+  </script>
+</body>
+</html>

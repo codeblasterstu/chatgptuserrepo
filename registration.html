@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registration | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card section">
+      <h1>User Registration</h1>
+      <p>Register a new account. Administrative fields are managed by admins after registration.</p>
+      <div id="notice"></div>
+      <form id="registrationForm">
+        <div class="grid-3">
+          <label>First Name<input name="first_name" required /></label>
+          <label>Last Name<input name="last_name" required /></label>
+          <label>Date of Birth<input name="dob" type="date" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Gender
+            <select name="gender" required>
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Phone<input name="phone" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Username<input name="username" required /></label>
+          <label>Password<input name="password_hash" type="password" required /></label>
+          <label>User Category ID<input name="user_category_id" placeholder="From User_categories table" required /></label>
+        </div>
+        <label>Notes<textarea name="notes"></textarea></label>
+        <button class="btn-primary" type="submit">Register</button>
+      </form>
+      <p><a href="index.html">Back to login</a></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const form = document.getElementById('registrationForm');
+    const notice = document.getElementById('notice');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = toFormData(form);
+      const users = getUsers();
+
+      if (users.some(u => u.username === data.username || u.email === data.email)) {
+        showNotice(notice, 'Username or email already exists.', true);
+        return;
+      }
+
+      const now = new Date().toISOString();
+      const newUser = {
+        id: users.length ? Math.max(...users.map(u => Number(u.id))) + 1 : 1,
+        ...data,
+        role_id: '3',
+        created_at: now,
+        reset_code: '',
+        is_active: false,
+        activation_code: `ACT-${Date.now()}`,
+        updated_by: data.username,
+        updated_at: now,
+        is_visible: 'y'
+      };
+      users.push(newUser);
+      saveUsers(users);
+      form.reset();
+      showNotice(notice, 'Registration successful. Await admin activation.');
+    });
+  </script>
+</body>
+</html>

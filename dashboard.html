@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-layout">
+      <div class="brand-row">
+        <strong>User Admin Portal</strong>
+        <button class="btn btn-nav-toggle" type="button" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+      <nav class="nav-links" id="mainNav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="create-user.html">Create</a>
+        <a href="list-users.html">List</a>
+        <a href="edit-user.html">Edit</a>
+        <a href="update-user.html">Update</a>
+      </nav>
+      <button class="btn btn-muted nav-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h1>After Login Interface</h1>
+      <p>Welcome, <strong id="activeUser"></strong>. Use the modules above to manage all required user fields and workflows.</p>
+      <ul>
+        <li>Create: Add full user profile with all schema fields.</li>
+        <li>List: View users and status visibility.</li>
+        <li>Edit: Select and modify existing record values.</li>
+        <li>Update: Update account state/activation/reset values.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    requireLogin();
+    setNavActive();
+    document.getElementById('activeUser').textContent = sessionStorage.getItem('loggedInUser') || 'User';
+  </script>
+</body>
+</html>
