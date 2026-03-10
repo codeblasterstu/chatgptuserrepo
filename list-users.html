@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List Users | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <strong>User Admin Portal</strong>
+      <nav class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="create-user.html">Create</a>
+        <a href="list-users.html">List</a>
+        <a href="edit-user.html">Edit</a>
+        <a href="update-user.html">Update</a>
+      </nav>
+      <button class="btn btn-muted" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h1>User List</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Username</th><th>Role</th><th>Status</th><th>Visible</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    requireLogin();
+    setNavActive();
+    const rows = document.getElementById('rows');
+
+    function render() {
+      const users = getUsers();
+      rows.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.first_name} ${u.last_name}</td>
+          <td>${u.email}</td>
+          <td>${u.username}</td>
+          <td>${u.role_id}</td>
+          <td><span class="badge ${u.is_active ? 'badge-success' : 'badge-muted'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+          <td>${u.is_visible || 'y'}</td>
+        </tr>
+      `).join('');
+    }
+    render();
+  </script>
+</body>
+</html>

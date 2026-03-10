@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update User | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <strong>User Admin Portal</strong>
+      <nav class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="create-user.html">Create</a>
+        <a href="list-users.html">List</a>
+        <a href="edit-user.html">Edit</a>
+        <a href="update-user.html">Update</a>
+      </nav>
+      <button class="btn btn-muted" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h1>Update User (Admin Controls)</h1>
+      <div id="notice"></div>
+      <form id="updateForm">
+        <div class="grid-3">
+          <label>User
+            <select name="id" id="updateUserPicker"></select>
+          </label>
+          <label>Role ID<input name="role_id" required /></label>
+          <label>Reset Code<input name="reset_code" /></label>
+        </div>
+        <div class="grid-3">
+          <label>Activation Code<input name="activation_code" /></label>
+          <label>User Category ID<input name="user_category_id" required /></label>
+          <label>Is Visible
+            <select name="is_visible"><option value="y">y</option><option value="n">n</option></select>
+          </label>
+        </div>
+        <div class="grid-2">
+          <label><input name="is_active" type="checkbox" /> Is Active</label>
+          <label>Updated By<input name="updated_by" required /></label>
+        </div>
+        <button class="btn-primary" type="submit">Update Account</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    requireLogin();
+    setNavActive();
+
+    const form = document.getElementById('updateForm');
+    const picker = document.getElementById('updateUserPicker');
+    const notice = document.getElementById('notice');
+
+    function loadUsers() {
+      const users = getUsers();
+      picker.innerHTML = users.map(u => `<option value="${u.id}">${u.id} - ${u.username}</option>`).join('');
+      bindData();
+    }
+
+    function bindData() {
+      const users = getUsers();
+      const user = users.find(u => String(u.id) === picker.value);
+      if (!user) return;
+      form.role_id.value = user.role_id;
+      form.reset_code.value = user.reset_code || '';
+      form.activation_code.value = user.activation_code || '';
+      form.user_category_id.value = user.user_category_id || '';
+      form.is_visible.value = user.is_visible || 'y';
+      form.is_active.checked = Boolean(user.is_active);
+      form.updated_by.value = sessionStorage.getItem('loggedInUser') || 'admin';
+    }
+
+    picker.addEventListener('change', bindData);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const users = getUsers();
+      const i = users.findIndex(u => String(u.id) === picker.value);
+      if (i < 0) return;
+
+      users[i].role_id = form.role_id.value;
+      users[i].reset_code = form.reset_code.value;
+      users[i].activation_code = form.activation_code.value;
+      users[i].user_category_id = form.user_category_id.value;
+      users[i].is_visible = form.is_visible.value;
+      users[i].is_active = form.is_active.checked;
+      users[i].updated_by = form.updated_by.value;
+      users[i].updated_at = new Date().toISOString();
+
+      saveUsers(users);
+      showNotice(notice, 'Administrative update completed successfully.');
+    });
+
+    loadUsers();
+  </script>
+</body>
+</html>

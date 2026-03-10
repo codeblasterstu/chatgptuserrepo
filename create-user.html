@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create User | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <strong>User Admin Portal</strong>
+      <nav class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="create-user.html">Create</a>
+        <a href="list-users.html">List</a>
+        <a href="edit-user.html">Edit</a>
+        <a href="update-user.html">Update</a>
+      </nav>
+      <button class="btn btn-muted" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card section">
+      <h1>Create User</h1>
+      <div id="notice"></div>
+      <form id="createForm">
+        <div class="grid-3">
+          <label>ID<input name="id" type="number" required /></label>
+          <label>First Name<input name="first_name" required /></label>
+          <label>Last Name<input name="last_name" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>DOB<input name="dob" type="date" required /></label>
+          <label>Gender
+            <select name="gender" required><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+          </label>
+          <label>Email<input name="email" type="email" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Phone<input name="phone" required /></label>
+          <label>Username<input name="username" required /></label>
+          <label>Password Hash<input name="password_hash" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Role ID (admin sets)<input name="role_id" required /></label>
+          <label>Created At<input name="created_at" type="datetime-local" required /></label>
+          <label>Reset Code (admin sets)<input name="reset_code" /></label>
+        </div>
+        <div class="grid-3">
+          <label><input name="is_active" type="checkbox" /> Is Active</label>
+          <label>Activation Code<input name="activation_code" required /></label>
+          <label>Updated By<input name="updated_by" required /></label>
+        </div>
+        <div class="grid-3">
+          <label>Updated At<input name="updated_at" type="datetime-local" required /></label>
+          <label>User Category ID<input name="user_category_id" required /></label>
+          <label>Is Visible
+            <select name="is_visible"><option value="y">y</option><option value="n">n</option></select>
+          </label>
+        </div>
+        <label>Notes<textarea name="notes"></textarea></label>
+        <button class="btn-primary" type="submit">Create User</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    requireLogin();
+    setNavActive();
+    const form = document.getElementById('createForm');
+    const notice = document.getElementById('notice');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = toFormData(form);
+      const users = getUsers();
+      data.id = Number(data.id);
+      data.created_at = new Date(data.created_at).toISOString();
+      data.updated_at = new Date(data.updated_at).toISOString();
+
+      if (users.some(u => Number(u.id) === data.id || u.username === data.username || u.email === data.email)) {
+        showNotice(notice, 'Duplicate id, username, or email found.', true);
+        return;
+      }
+
+      users.push(data);
+      saveUsers(users);
+      form.reset();
+      showNotice(notice, 'User created successfully.');
+    });
+  </script>
+</body>
+</html>

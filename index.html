@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | User Admin Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page-center">
+    <section class="card auth-card">
+      <div class="auth-hero">
+        <h1>User Administration Portal</h1>
+        <p>Secure sign-in for user operations: create, list, edit, and update user records.</p>
+      </div>
+      <div class="auth-form">
+        <h2>Sign In</h2>
+        <p>Use the default admin account: <strong>admin / admin123</strong></p>
+        <div id="notice"></div>
+        <form id="loginForm">
+          <label>Username
+            <input type="text" name="username" required />
+          </label>
+          <label>Password
+            <input type="password" name="password" required />
+          </label>
+          <button class="btn-primary" type="submit">Login</button>
+        </form>
+        <p>New user? <a href="registration.html">Register here</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const notice = document.getElementById('notice');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const { username, password } = Object.fromEntries(new FormData(form).entries());
+      const users = getUsers();
+      const found = users.find(u => u.username === username && u.password_hash === password && u.is_active);
+
+      if (!found) {
+        showNotice(notice, 'Invalid credentials or inactive account.', true);
+        return;
+      }
+
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('loggedInUser', found.username);
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>
