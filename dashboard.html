@@ -8,16 +8,19 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="container">
-      <strong>User Admin Portal</strong>
-      <nav class="nav-links">
+    <div class="container topbar-layout">
+      <div class="brand-row">
+        <strong>User Admin Portal</strong>
+        <button class="btn btn-nav-toggle" type="button" onclick="toggleMobileNav()" aria-label="Toggle menu">☰</button>
+      </div>
+      <nav class="nav-links" id="mainNav">
         <a href="dashboard.html">Dashboard</a>
         <a href="create-user.html">Create</a>
         <a href="list-users.html">List</a>
         <a href="edit-user.html">Edit</a>
         <a href="update-user.html">Update</a>
       </nav>
-      <button class="btn btn-muted" onclick="logout()">Logout</button>
+      <button class="btn btn-muted nav-logout" onclick="logout()">Logout</button>
     </div>
   </header>
 

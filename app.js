@@ -67,4 +67,18 @@ function logout() {
   window.location.href = "index.html";
 }
 
+function toggleMobileNav() {
+  const nav = document.getElementById("mainNav");
+  if (nav) nav.classList.toggle("open");
+}
+
+function initMobileNav() {
+  const nav = document.getElementById("mainNav");
+  if (!nav) return;
+  nav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => nav.classList.remove("open"));
+  });
+}
+
 seedAdmin();
+initMobileNav();
